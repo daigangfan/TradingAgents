@@ -8,3 +8,6 @@ eval_data/
 *.egg-info/
 .env
 .vscode/
+models.yaml 
+models_config.yaml
+results/
