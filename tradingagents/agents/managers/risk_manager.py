@@ -1,17 +1,12 @@
 import time
 import json
-
-
 def create_risk_manager(llm, memory):
     def risk_manager_node(state) -> dict:
-
-        company_name = state["company_of_interest"]
-
         history = state["risk_debate_state"]["history"]
         risk_debate_state = state["risk_debate_state"]
         market_research_report = state["market_report"]
         news_report = state["news_report"]
-        fundamentals_report = state["news_report"]
+        fundamentals_report = state["fundamentals_report"]
         sentiment_report = state["sentiment_report"]
         trader_plan = state["investment_plan"]
 
@@ -19,29 +14,29 @@ def create_risk_manager(llm, memory):
         past_memories = memory.get_memories(curr_situation, n_matches=2)
 
         past_memory_str = ""
-        for i, rec in enumerate(past_memories, 1):
+        for _, rec in enumerate(past_memories, 1):
             past_memory_str += rec["recommendation"] + "\n\n"
 
-        prompt = f"""As the Risk Management Judge and Debate Facilitator, your goal is to evaluate the debate between three risk analysts—Risky, Neutral, and Safe/Conservative—and determine the best course of action for the trader. Your decision must result in a clear recommendation: Buy, Sell, or Hold. Choose Hold only if strongly justified by specific arguments, not as a fallback when all sides seem valid. Strive for clarity and decisiveness.
+        prompt = f"""作为风险管理裁决者与辩论引导者，你需要评估三类风险分析师（激进 Risky / 中性 Neutral / 保守 Safe）的辩论内容，并为交易员确定最优行动路径。你的结论必须在：Buy / Sell / Hold 之间做出明确选择。只有在有充分、具体理由时才选择 Hold，而不是在观点分散时的默认折中。追求清晰与决断。
 
-Guidelines for Decision-Making:
-1. **Summarize Key Arguments**: Extract the strongest points from each analyst, focusing on relevance to the context.
-2. **Provide Rationale**: Support your recommendation with direct quotes and counterarguments from the debate.
-3. **Refine the Trader's Plan**: Start with the trader's original plan, **{trader_plan}**, and adjust it based on the analysts' insights.
-4. **Learn from Past Mistakes**: Use lessons from **{past_memory_str}** to address prior misjudgments and improve the decision you are making now to make sure you don't make a wrong BUY/SELL/HOLD call that loses money.
+决策指引：
+1. 关键要点总结：提炼每位分析师最有力、与情境最相关的论据。
+2. 给出支撑理由：用辩论中的直接观点、引述与反驳支撑你的结论。
+3. 优化交易员原计划：基于最初计划 **{trader_plan}**，结合分析师洞察进行必要调整。
+4. 吸取历史经验：参考 **{past_memory_str}** 中的教训，避免重复错误，防止因错误的 BUY/SELL/HOLD 判断造成损失。
 
-Deliverables:
-- A clear and actionable recommendation: Buy, Sell, or Hold.
-- Detailed reasoning anchored in the debate and past reflections.
+交付内容：
+- 一个清晰、可执行的建议：Buy / Sell / Hold。
+- 结合辩论与历史反思的详细理由。
 
 ---
 
-**Analysts Debate History:**  
+辩论历史（Analysts Debate History）:
 {history}
 
 ---
 
-Focus on actionable insights and continuous improvement. Build on past lessons, critically evaluate all perspectives, and ensure each decision advances better outcomes."""
+聚焦可执行洞察与持续改进。建立在历史经验之上，批判性整合多方观点，确保本次决策质量提升。"""
 
         response = llm.invoke(prompt)
 

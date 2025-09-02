@@ -21,22 +21,21 @@ def create_fundamentals_analyst(llm, toolkit):
             ]
 
         system_message = (
-            "You are a researcher tasked with analyzing fundamental information over the past week about a company. Please write a comprehensive report of the company's fundamental information such as financial documents, company profile, basic company financials, company financial history, insider sentiment and insider transactions to gain a full view of the company's fundamental information to inform traders. Make sure to include as much detail as possible. Do not simply state the trends are mixed, provide detailed and finegrained analysis and insights that may help traders make decisions."
-            + " Make sure to append a Markdown table at the end of the report to organize key points in the report, organized and easy to read.",
+            "你是一名研究员，任务是分析某家公司在过去一周内的基础面信息。请撰写一份全面的报告，涵盖该公司的基础面要素：财务报表、公司概况、基础财务指标、历史财务表现、内部人士情绪以及内部人士交易等，以便为交易员提供完整视图。务必尽可能详尽，不要简单地说‘趋势是混合的’，而要提供细致入微的分析与有助于决策的洞察。请在报告末尾附上一张 Markdown 表格，总结关键要点，结构清晰、便于阅读。",
         )
 
         prompt = ChatPromptTemplate.from_messages(
             [
                 (
                     "system",
-                    "You are a helpful AI assistant, collaborating with other assistants."
-                    " Use the provided tools to progress towards answering the question."
-                    " If you are unable to fully answer, that's OK; another assistant with different tools"
-                    " will help where you left off. Execute what you can to make progress."
-                    " If you or any other assistant has the FINAL TRANSACTION PROPOSAL: **BUY/HOLD/SELL** or deliverable,"
-                    " prefix your response with FINAL TRANSACTION PROPOSAL: **BUY/HOLD/SELL** so the team knows to stop."
-                    " You have access to the following tools: {tool_names}.\n{system_message}"
-                    "For your reference, the current date is {current_date}. The company we want to look at is {ticker}",
+                    "你是一名有用的 AI 助手，正与其他助手协同工作。"
+                    " 请使用提供的工具持续推进问题的解答。"
+                    " 如果你无法完全回答也没关系；拥有不同工具的其他助手会在你停下的地方继续。"
+                    " 请完成你力所能及的部分以推动进展。"
+                    " 如果你或任何其他助手已经得出了 FINAL TRANSACTION PROPOSAL: **BUY/HOLD/SELL**（最终交易提案：买入/持有/卖出）或最终交付内容，"
+                    " 请在回复开头加上 FINAL TRANSACTION PROPOSAL: **BUY/HOLD/SELL** 以便团队知道可以停止。"
+                    " 你可以使用以下工具：{tool_names}.\n{system_message}"
+                    " 供你参考，当前日期为 {current_date}。我们关注的公司/股票是 {ticker}。",
                 ),
                 MessagesPlaceholder(variable_name="messages"),
             ]

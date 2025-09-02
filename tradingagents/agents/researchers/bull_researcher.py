@@ -1,8 +1,3 @@
-from langchain_core.messages import AIMessage
-import time
-import json
-
-
 def create_bull_researcher(llm, memory):
     def bull_node(state) -> dict:
         investment_debate_state = state["investment_debate_state"]
@@ -19,28 +14,28 @@ def create_bull_researcher(llm, memory):
         past_memories = memory.get_memories(curr_situation, n_matches=2)
 
         past_memory_str = ""
-        for i, rec in enumerate(past_memories, 1):
+        for _, rec in enumerate(past_memories, 1):
             past_memory_str += rec["recommendation"] + "\n\n"
 
-        prompt = f"""You are a Bull Analyst advocating for investing in the stock. Your task is to build a strong, evidence-based case emphasizing growth potential, competitive advantages, and positive market indicators. Leverage the provided research and data to address concerns and counter bearish arguments effectively.
+        prompt = f"""你是一名看多（Bull）分析师，主张对该股票进行投资。你的任务是构建一个有力且以证据为基础的论证，突出其增长潜力、竞争优势与积极市场信号。请利用提供的研究与数据回应质疑，并有效反驳看空（Bear）观点。
 
-Key points to focus on:
-- Growth Potential: Highlight the company's market opportunities, revenue projections, and scalability.
-- Competitive Advantages: Emphasize factors like unique products, strong branding, or dominant market positioning.
-- Positive Indicators: Use financial health, industry trends, and recent positive news as evidence.
-- Bear Counterpoints: Critically analyze the bear argument with specific data and sound reasoning, addressing concerns thoroughly and showing why the bull perspective holds stronger merit.
-- Engagement: Present your argument in a conversational style, engaging directly with the bear analyst's points and debating effectively rather than just listing data.
+需要重点关注：
+- 增长潜力：市场空间、收入预期、可扩展性。
+- 竞争优势：产品独特性、品牌力、市场主导位置等。
+- 积极指标：财务健康度、行业趋势、近期正面新闻。
+- 针对 Bear 反驳：用具体数据与严谨推理拆解其担忧，说明为何多头观点更具说服力。
+- 互动性：用对话式方式呈现，直接回应对方观点，而非生硬罗列表格数据。
 
-Resources available:
-Market research report: {market_research_report}
-Social media sentiment report: {sentiment_report}
-Latest world affairs news: {news_report}
-Company fundamentals report: {fundamentals_report}
-Conversation history of the debate: {history}
-Last bear argument: {current_response}
-Reflections from similar situations and lessons learned: {past_memory_str}
-Use this information to deliver a compelling bull argument, refute the bear's concerns, and engage in a dynamic debate that demonstrates the strengths of the bull position. You must also address reflections and learn from lessons and mistakes you made in the past.
-"""
+可用资源：
+市场研究报告: {market_research_report}
+社交媒体情绪报告: {sentiment_report}
+全球/宏观新闻: {news_report}
+公司基本面报告: {fundamentals_report}
+当前辩论历史: {history}
+最新看空论点: {current_response}
+相似情境的反思与经验教训: {past_memory_str}
+
+请结合以上信息，输出一个令人信服的看多论证，反驳看空观点，并在动态辩论中展示多头立场的优势；同时体现你从历史反思中吸取的改进。"""
 
         response = llm.invoke(prompt)
 
