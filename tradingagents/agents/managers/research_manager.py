@@ -1,7 +1,3 @@
-import time
-import json
-
-
 def create_research_manager(llm, memory):
     def research_manager_node(state) -> dict:
         history = state["investment_debate_state"].get("history", "")
@@ -16,24 +12,23 @@ def create_research_manager(llm, memory):
         past_memories = memory.get_memories(curr_situation, n_matches=2)
 
         past_memory_str = ""
-        for i, rec in enumerate(past_memories, 1):
+        for _, rec in enumerate(past_memories, 1):
             past_memory_str += rec["recommendation"] + "\n\n"
 
-        prompt = f"""As the portfolio manager and debate facilitator, your role is to critically evaluate this round of debate and make a definitive decision: align with the bear analyst, the bull analyst, or choose Hold only if it is strongly justified based on the arguments presented.
+        prompt = f"""作为投资组合经理与辩论协调者，你需要对本轮辩论进行批判性评估，并做出明确决策：支持看空（Bear）、看多（Bull），或在有充分论证时选择 Hold（而非模糊折中）。
 
-Summarize the key points from both sides concisely, focusing on the most compelling evidence or reasoning. Your recommendation—Buy, Sell, or Hold—must be clear and actionable. Avoid defaulting to Hold simply because both sides have valid points; commit to a stance grounded in the debate's strongest arguments.
+请简洁总结双方最有力的核心论据，聚焦最具说服力的证据与推理。你的建议（Buy / Sell / Hold）必须清晰、可执行。不要因为双方都“有道理”而默认 Hold，应基于最强论据坚定选择。
 
-Additionally, develop a detailed investment plan for the trader. This should include:
+此外，请给出一份详细的交易/投资计划，包括：
+1. 建议（Recommendation）：明确立场与其支撑论据。
+2. 理由（Rationale）：解释为何这些观点足以得出结论。
+3. 策略行动（Strategic Actions）：执行该建议的具体步骤。
+请结合相似情境的过往失误，利用这些反思优化你的决策逻辑，体现学习改进。输出应自然对话风格，无需特殊格式。
 
-Your Recommendation: A decisive stance supported by the most convincing arguments.
-Rationale: An explanation of why these arguments lead to your conclusion.
-Strategic Actions: Concrete steps for implementing the recommendation.
-Take into account your past mistakes on similar situations. Use these insights to refine your decision-making and ensure you are learning and improving. Present your analysis conversationally, as if speaking naturally, without special formatting. 
+以下是你的历史反思：
+"{past_memory_str}"
 
-Here are your past reflections on mistakes:
-\"{past_memory_str}\"
-
-Here is the debate:
+以下为当前辩论内容：
 Debate History:
 {history}"""
         response = llm.invoke(prompt)
