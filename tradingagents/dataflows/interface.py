@@ -704,104 +704,73 @@ def get_YFin_data(
 
 def get_stock_news_openai(ticker, curr_date):
     config = get_config()
-    client = OpenAI(base_url=config["backend_url"])
+    client = OpenAI(base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",api_key=os.environ['SEARCH_API_KEY'])
 
-    response = client.responses.create(
-        model=config["quick_think_llm"],
-        input=[
+    response = client.chat.completions.create(
+        model="qwen-plus-latest",
+        messages=[
+            {"role":"system","content":"you are a helpful assistant"},
             {
-                "role": "system",
-                "content": [
-                    {
-                        "type": "input_text",
-                        "text": f"Can you search Social Media for {ticker} from 7 days before {curr_date} to {curr_date}? Make sure you only get the data posted during that period.",
-                    }
-                ],
-            }
-        ],
-        text={"format": {"type": "text"}},
-        reasoning={},
-        tools=[
-            {
-                "type": "web_search_preview",
-                "user_location": {"type": "approximate"},
-                "search_context_size": "low",
+                "role": "user",
+                "content": f"请你检索关于 {ticker} 的股票的新闻，时间范围为 {curr_date} 前 7 天至 {curr_date} 当日。务必只返回这一时间区间内发布的内容。",
             }
         ],
         temperature=1,
-        max_output_tokens=4096,
-        top_p=1,
-        store=True,
+        max_tokens=4096,
+        extra_body={"enable_search":True,"forced_search":True}
     )
 
-    return response.output[1].content[0].text
+    return response.choices[0].message.content
 
 
 def get_global_news_openai(curr_date):
     config = get_config()
-    client = OpenAI(base_url=config["backend_url"])
+    client = OpenAI(base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",api_key=os.environ['SEARCH_API_KEY'])
 
-    response = client.responses.create(
-        model=config["quick_think_llm"],
-        input=[
+    response = client.chat.completions.create(
+        model="qwen-plus-latest",
+        messages=[
+            {"role":"system","content":"you are a helpful assistant"},
+            
             {
-                "role": "system",
-                "content": [
-                    {
-                        "type": "input_text",
-                        "text": f"Can you search global or macroeconomics news from 7 days before {curr_date} to {curr_date} that would be informative for trading purposes? Make sure you only get the data posted during that period.",
-                    }
-                ],
+                "role": "user",
+                "content": f"请搜索在 {curr_date} 前 7 天至 {curr_date} 期间发布的全球或宏观经济相关新闻，要求对交易决策有参考价值。务必仅返回该时间区间内发布的内容。",
             }
+
         ],
-        text={"format": {"type": "text"}},
-        reasoning={},
-        tools=[
-            {
-                "type": "web_search_preview",
-                "user_location": {"type": "approximate"},
-                "search_context_size": "low",
-            }
-        ],
+        
         temperature=1,
-        max_output_tokens=4096,
-        top_p=1,
-        store=True,
+        max_tokens=4096,
+        extra_body={"enable_search":True,"forced_search":True}
     )
 
-    return response.output[1].content[0].text
+    return response.choices[0].message.content
 
+
+    
 
 def get_fundamentals_openai(ticker, curr_date):
     config = get_config()
-    client = OpenAI(base_url=config["backend_url"])
+    client = OpenAI(base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",api_key=os.environ['SEARCH_API_KEY'])
 
-    response = client.responses.create(
-        model=config["quick_think_llm"],
-        input=[
+    response = client.chat.completions.create(
+        model="qwen-plus-latest",
+        messages=[
+            {"role":"system","content":"you are a helpful assistant"},
+            
             {
-                "role": "system",
-                "content": [
-                    {
-                        "type": "input_text",
-                        "text": f"Can you search Fundamental for discussions on {ticker} during of the month before {curr_date} to the month of {curr_date}. Make sure you only get the data posted during that period. List as a table, with PE/PS/Cash flow/ etc",
-                    }
-                ],
+                "role": "user",
+                "content": f"请检索关于 {ticker} 的基本面讨论，时间范围为 {curr_date} 前一个月至 {curr_date} 所在当月。务必只包含该期间发布的内容。请用表格列出关键指标（如 PE、PS、现金流等）。",
             }
+
         ],
-        text={"format": {"type": "text"}},
-        reasoning={},
-        tools=[
-            {
-                "type": "web_search_preview",
-                "user_location": {"type": "approximate"},
-                "search_context_size": "low",
-            }
-        ],
+        
         temperature=1,
-        max_output_tokens=4096,
-        top_p=1,
-        store=True,
+        max_tokens=4096,
+        extra_body={"enable_search":True,"forced_search":True}
     )
 
-    return response.output[1].content[0].text
+    return response.choices[0].message.content
+
+
+    

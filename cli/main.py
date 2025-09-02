@@ -24,7 +24,8 @@ from tradingagents.graph.trading_graph import TradingAgentsGraph
 from tradingagents.default_config import DEFAULT_CONFIG
 from cli.models import AnalystType
 from cli.utils import *
-
+import dotenv 
+dotenv.load_dotenv()
 console = Console()
 
 app = typer.Typer(

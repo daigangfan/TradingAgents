@@ -156,7 +156,8 @@ class Toolkit:
         Returns:
             str: A formatted dataframe containing the stock price data for the specified ticker symbol in the specified date range.
         """
-
+        if symbol.endswith(".SH"):
+            symbol = symbol.replace(".SH",".SS")
         result_data = interface.get_YFin_data_online(symbol, start_date, end_date)
 
         return result_data
@@ -212,7 +213,8 @@ class Toolkit:
         Returns:
             str: A formatted dataframe containing the stock stats indicators for the specified ticker symbol and indicator.
         """
-
+        if symbol.endswith(".SH"):
+            symbol = symbol.replace('.SH','.SS')
         result_stockstats = interface.get_stock_stats_indicators_window(
             symbol, indicator, curr_date, look_back_days, True
         )
